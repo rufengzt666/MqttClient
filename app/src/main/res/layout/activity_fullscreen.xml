@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0099cc"
+    tools:context=".FullscreenActivity">
+
+    <TextView
+        android:id="@+id/fullscreen_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:keepScreenOn="true"
+        android:textColor="#33b5e5"
+        android:textSize="50sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_tianqi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="天气"
+        android:textSize="30dp"
+        android:layout_marginTop="30dp"
+        android:textColor="#000"
+        />
+    <TextView
+        android:id="@+id/tv_wendu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="温度"
+        android:textSize="30dp"
+        android:layout_marginTop="70dp"
+        android:textColor="#000"
+        />
+    <TextView
+        android:id="@+id/tv_fengli"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="风力"
+        android:textSize="30dp"
+        android:layout_marginTop="110dp"
+        android:textColor="#000"/>
+
+    <TextView
+        android:id="@+id/tv_fengxiang"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="风向"
+        android:textSize="30dp"
+        android:layout_marginTop="150dp"
+        android:textColor="#000"
+        />
+
+
+</FrameLayout>
