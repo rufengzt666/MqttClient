@@ -10,14 +10,18 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.mqttclient.mqtt.MqttService;
+import android.speech.tts.TextToSpeech;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-public class MainActivity extends AppCompatActivity implements MqttService.MqttEventCallBack {
+import java.util.Locale;
 
+public class MainActivity extends AppCompatActivity implements MqttService.MqttEventCallBack {
+    private TextToSpeech tts;
     private TextView connectState;
     private MqttService.MqttBinder mqttBinder;
     private String TAG = "MainActivity";
@@ -52,27 +56,68 @@ public class MainActivity extends AppCompatActivity implements MqttService.MqttE
         Intent mqttServiceIntent = new Intent(this, MqttService.class);
         bindService(mqttServiceIntent, connection, Context.BIND_AUTO_CREATE);
 
+        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int i) {
+                if(i == TextToSpeech.SUCCESS) {
+                    int result = tts.setLanguage(Locale.CHINESE);
+                    if(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "Language not supported");
+                    }
+                    else {
+                        Log.e("TTS", "Initialization failed");
+                    }
+                }
+
+            }
+        });
+
         findViewById(R.id.settings_btn).setOnClickListener((view)->{
-                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(intent);
+            Button btn = (Button)findViewById(R.id.settings_btn);
+            String content = btn.getText().toString();
+            if(content != null && !content.isEmpty()) {
+                tts.speak(content, TextToSpeech.QUEUE_FLUSH, null);
+            }
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
         });
 
         findViewById(R.id.pubsub_test_btn).setOnClickListener((view)->{
+            Button btn = (Button)findViewById(R.id.pubsub_test_btn);
+            String content = btn.getText().toString();
+            if(content != null && !content.isEmpty()) {
+                tts.speak(content, TextToSpeech.QUEUE_FLUSH, null);
+            }
             Intent intent = new Intent(MainActivity.this, PubSubTestActivity.class);
             startActivity(intent);
         });
 
         findViewById(R.id.dev_demo_btn).setOnClickListener((view)->{
+            Button btn = (Button)findViewById(R.id.dev_demo_btn);
+            String content = btn.getText().toString();
+            if(content != null && !content.isEmpty()) {
+                tts.speak(content, TextToSpeech.QUEUE_FLUSH, null);
+            }
             Intent intent = new Intent(MainActivity.this, DevicesDemoAcitvity.class);
             startActivity(intent);
         });
 
         findViewById(R.id.get_weather).setOnClickListener((view) -> {
+            Button btn = (Button)findViewById(R.id.get_weather);
+            String content = btn.getText().toString();
+            if(content != null && !content.isEmpty()) {
+                tts.speak(content, TextToSpeech.QUEUE_FLUSH, null);
+            }
             Intent intent = new Intent(MainActivity.this, ChooseCity.class);
             startActivity(intent);
         });
 
         findViewById(R.id.setting_info).setOnClickListener((view) -> {
+            Button btn = (Button)findViewById(R.id.setting_info);
+            String content = btn.getText().toString();
+            if(content != null && !content.isEmpty()) {
+                tts.speak(content, TextToSpeech.QUEUE_FLUSH, null);
+            }
             Intent intent = new Intent(MainActivity.this, TempShowActivity.class);
             startActivity(intent);
         });
@@ -137,6 +182,10 @@ public class MainActivity extends AppCompatActivity implements MqttService.MqttE
     @Override
     protected void onDestroy() {
         unbindService(connection);
+        if(tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
         super.onDestroy();
     }
 }
