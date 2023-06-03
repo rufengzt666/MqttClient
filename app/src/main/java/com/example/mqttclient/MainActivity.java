@@ -21,7 +21,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements MqttService.MqttEventCallBack {
-    private TextToSpeech tts;
+    private TextToSpeech tts = null;
     private TextView connectState;
     private MqttService.MqttBinder mqttBinder;
     private String TAG = "MainActivity";
@@ -72,10 +72,11 @@ public class MainActivity extends AppCompatActivity implements MqttService.MqttE
             }
         });
 
+
         findViewById(R.id.settings_btn).setOnClickListener((view)->{
             Button btn = (Button)findViewById(R.id.settings_btn);
             String content = btn.getText().toString();
-            if(content != null && !content.isEmpty()) {
+            if(content != null && !content.isEmpty() && tts != null) {
                 tts.speak(content, TextToSpeech.QUEUE_FLUSH, null);
             }
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements MqttService.MqttE
         findViewById(R.id.pubsub_test_btn).setOnClickListener((view)->{
             Button btn = (Button)findViewById(R.id.pubsub_test_btn);
             String content = btn.getText().toString();
-            if(content != null && !content.isEmpty()) {
+            if(content != null && !content.isEmpty() && tts != null) {
                 tts.speak(content, TextToSpeech.QUEUE_FLUSH, null);
             }
             Intent intent = new Intent(MainActivity.this, PubSubTestActivity.class);
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements MqttService.MqttE
         findViewById(R.id.dev_demo_btn).setOnClickListener((view)->{
             Button btn = (Button)findViewById(R.id.dev_demo_btn);
             String content = btn.getText().toString();
-            if(content != null && !content.isEmpty()) {
+            if(content != null && !content.isEmpty() && tts != null) {
                 tts.speak(content, TextToSpeech.QUEUE_FLUSH, null);
             }
             Intent intent = new Intent(MainActivity.this, DevicesDemoAcitvity.class);
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements MqttService.MqttE
         findViewById(R.id.get_weather).setOnClickListener((view) -> {
             Button btn = (Button)findViewById(R.id.get_weather);
             String content = btn.getText().toString();
-            if(content != null && !content.isEmpty()) {
+            if(content != null && !content.isEmpty() && tts != null) {
                 tts.speak(content, TextToSpeech.QUEUE_FLUSH, null);
             }
             Intent intent = new Intent(MainActivity.this, ChooseCity.class);
@@ -115,11 +116,46 @@ public class MainActivity extends AppCompatActivity implements MqttService.MqttE
         findViewById(R.id.setting_info).setOnClickListener((view) -> {
             Button btn = (Button)findViewById(R.id.setting_info);
             String content = btn.getText().toString();
-            if(content != null && !content.isEmpty()) {
+            if(content != null && !content.isEmpty() && tts != null) {
                 tts.speak(content, TextToSpeech.QUEUE_FLUSH, null);
             }
             Intent intent = new Intent(MainActivity.this, TempShowActivity.class);
             startActivity(intent);
+        });
+
+
+        findViewById(R.id.tts_switch).setOnClickListener((view) -> {
+            Button btn = (Button)findViewById(R.id.tts_switch);
+            String content = btn.getText().toString();
+            if(tts == null) {
+                tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int i) {
+                        if(i == TextToSpeech.SUCCESS) {
+                            int result = tts.setLanguage(Locale.CHINESE);
+                            if(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                                Log.e("TTS", "Language not supported");
+                            }
+                            else {
+                                Log.e("TTS", "Initialization failed");
+                            }
+                        }
+
+                    }
+                });
+                if(content != null && !content.isEmpty() && tts != null) {
+                    tts.speak(content, TextToSpeech.QUEUE_FLUSH, null);
+                }
+                btn.setText("语音播报：关闭");
+            }
+            else {
+                if(content != null && !content.isEmpty() && tts != null) {
+                    tts.speak(content, TextToSpeech.QUEUE_FLUSH, null);
+                }
+                btn.setText("语音播报：开启");
+                tts = null;
+            }
+
         });
     }
 
